@@ -26,6 +26,19 @@ namespace QuizApp.Controllers
             return View(await applicationDbContext.ToListAsync());
         }
 
+        // GET: Questions/Search
+        public async Task<IActionResult> Search()
+        {
+            return View();
+        }
+
+        // GET: Questions/SearchResult
+        public async Task<IActionResult> SearchResult(string SearchPhrase)
+        {
+            var applicationDbContext = _context.Questions.Include(q => q.Category);
+            return View("Index", await applicationDbContext.Where(x=>x.Text.Contains(SearchPhrase)).ToListAsync());
+        }
+
         // GET: Questions/Details/5
         public async Task<IActionResult> Details(int? id)
         {
