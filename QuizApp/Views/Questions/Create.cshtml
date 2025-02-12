@@ -37,30 +37,18 @@
                 <span asp-validation-for="CategoryId" class="text-danger"></span>
             </div>
 
-            <!-- Answer Inputs -->
-            <span class="form-group">
-                <input type="text" name="Answers[0].Text" class="form-control" placeholder="Enter answer 1 text..." />
-                <label for="Answer1IsCorrect">Is Correct?</label>
-                <input type="checkbox" name="Answers[0].IsCorrect" />
-            </span>
+            <!-- Answer Inputs (Dynamic) -->
+            <h5>Answers</h5>
+            <div id="answers-container">
+                <div class="answer-row form-group">
+                    <input type="text" name="Answers[0].Text" class="form-control" placeholder="Enter answer text..." />
+                    <label for="Answers_0__IsCorrect">Is Correct?</label>
+                    <input type="checkbox" name="Answers[0].IsCorrect" />
+                    <button type="button" class="btn btn-danger btn-remove-answer" style="margin-top: 5px;">Remove</button>
+                </div>
+            </div>
 
-            <span class="form-group">
-                <input type="text" name="Answers[1].Text" class="form-control" placeholder="Enter answer 2 text..." />
-                <label for="Answer2IsCorrect">Is Correct?</label>
-                <input type="checkbox" name="Answers[1].IsCorrect" />
-            </span>
-
-            <span class="form-group">
-                <input type="text" name="Answers[2].Text" class="form-control" placeholder="Enter answer 3 text..." />
-                <label for="Answer3IsCorrect">Is Correct?</label>
-                <input type="checkbox" name="Answers[2].IsCorrect" />
-            </span>
-
-            <span class="form-group">
-                <input type="text" name="Answers[3].Text" class="form-control" placeholder="Enter answer 4 text..." />
-                <label for="Answer4IsCorrect">Is Correct?</label>
-                <input type="checkbox" name="Answers[3].IsCorrect" />
-            </span>
+            <button type="button" class="btn btn-info" id="add-answer-btn">Add Answer</button>
 
             <!-- Submit Button -->
             <div class="form-group mt-3">
@@ -75,4 +63,29 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script>
+        $(document).ready(function () {
+            var answerIndex = 1;
+
+            // Add new answer row
+            $('#add-answer-btn').on('click', function () {
+                var answerRow = `
+                    <div class="answer-row form-group">
+                        <input type="text" name="Answers[${answerIndex}].Text" class="form-control" placeholder="Enter answer text..." />
+                        <label for="Answers_${answerIndex}__IsCorrect">Is Correct?</label>
+                        <input type="checkbox" name="Answers[${answerIndex}].IsCorrect" />
+                        <button type="button" class="btn btn-danger btn-remove-answer" style="margin-top: 5px;">Remove</button>
+                    </div>
+                `;
+                $('#answers-container').append(answerRow);
+                answerIndex++;
+            });
+
+            // Remove answer row
+            $(document).on('click', '.btn-remove-answer', function () {
+                $(this).closest('.answer-row').remove();
+            });
+        });
+    </script>
 }
