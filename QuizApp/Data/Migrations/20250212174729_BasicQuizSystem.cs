@@ -28,8 +28,7 @@ namespace QuizApp.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1")
                 },
                 constraints: table =>
                 {
@@ -44,9 +43,7 @@ namespace QuizApp.Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Text = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     State = table.Column<int>(type: "int", nullable: false),
-                    CategoryId = table.Column<int>(type: "int", nullable: false),
-                    UserDataId = table.Column<int>(type: "int", nullable: true),
-                    UserDataId1 = table.Column<int>(type: "int", nullable: true)
+                    CategoryId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -57,16 +54,6 @@ namespace QuizApp.Data.Migrations
                         principalTable: "Categories",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Questions_UserData_UserDataId",
-                        column: x => x.UserDataId,
-                        principalTable: "UserData",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Questions_UserData_UserDataId1",
-                        column: x => x.UserDataId1,
-                        principalTable: "UserData",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -76,6 +63,7 @@ namespace QuizApp.Data.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Text = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsCorrect = table.Column<bool>(type: "bit", nullable: false),
                     QuestionId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -98,16 +86,6 @@ namespace QuizApp.Data.Migrations
                 name: "IX_Questions_CategoryId",
                 table: "Questions",
                 column: "CategoryId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Questions_UserDataId",
-                table: "Questions",
-                column: "UserDataId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Questions_UserDataId1",
-                table: "Questions",
-                column: "UserDataId1");
         }
 
         /// <inheritdoc />
@@ -117,13 +95,13 @@ namespace QuizApp.Data.Migrations
                 name: "Answers");
 
             migrationBuilder.DropTable(
+                name: "UserData");
+
+            migrationBuilder.DropTable(
                 name: "Questions");
 
             migrationBuilder.DropTable(
                 name: "Categories");
-
-            migrationBuilder.DropTable(
-                name: "UserData");
         }
     }
 }

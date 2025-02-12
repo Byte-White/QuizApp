@@ -232,6 +232,9 @@ namespace QuizApp.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("IsCorrect")
+                        .HasColumnType("bit");
+
                     b.Property<int>("QuestionId")
                         .HasColumnType("int");
 
@@ -281,19 +284,9 @@ namespace QuizApp.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("UserDataId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("UserDataId1")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
-
-                    b.HasIndex("UserDataId");
-
-                    b.HasIndex("UserDataId1");
 
                     b.ToTable("Questions");
                 });
@@ -305,10 +298,6 @@ namespace QuizApp.Data.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -385,14 +374,6 @@ namespace QuizApp.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("QuizApp.Models.UserData", null)
-                        .WithMany("CorrectlyAnsweredQuestions")
-                        .HasForeignKey("UserDataId");
-
-                    b.HasOne("QuizApp.Models.UserData", null)
-                        .WithMany("CreatedQuestions")
-                        .HasForeignKey("UserDataId1");
-
                     b.Navigation("Category");
                 });
 
@@ -404,13 +385,6 @@ namespace QuizApp.Data.Migrations
             modelBuilder.Entity("QuizApp.Models.Question", b =>
                 {
                     b.Navigation("Answers");
-                });
-
-            modelBuilder.Entity("QuizApp.Models.UserData", b =>
-                {
-                    b.Navigation("CorrectlyAnsweredQuestions");
-
-                    b.Navigation("CreatedQuestions");
                 });
 #pragma warning restore 612, 618
         }
