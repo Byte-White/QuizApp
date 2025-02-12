@@ -8,9 +8,16 @@
 
 <div class="card mb-4">
     <div class="card-body">
-        <h4 class="card-title">Question</h4>
-        <p class="card-text">@Model.Text</p>
+        <h4 class="card-title">@Model.Text</h4>
+        <h6 class="text-muted">[@Model.State.ToString()]</h6>
         <p class="text-muted">Category: @Model.Category.Name</p>
+        <p>Correct answers: @{
+                int correctCount = 0;
+                foreach (var answer in Model.Answers)
+                    if (answer.IsCorrect) correctCount++;
+                <b>@correctCount</b>
+            }
+        </p>
     </div>
 </div>
 
