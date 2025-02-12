@@ -1,36 +1,75 @@
 ﻿@model QuizApp.Models.Question
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Question Details";
 }
 
-<h1>Details</h1>
+<h1>Question Details</h1>
 
-<div>
-    <h4>Question</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Text)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Text)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.State)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.State)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Category)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Category.Id)
-        </dd>
-    </dl>
+<div class="card mb-4">
+    <div class="card-body">
+        <h4 class="card-title">Question</h4>
+        <p class="card-text">@Model.Text</p>
+        <p class="text-muted">Category: @Model.Category.Name</p>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+<h5>Answers:</h5>
+<div id="answer-section" class="mb-4">
+    @if (Model.Answers != null && Model.Answers.Any())
+    {
+        <ul class="list-group" id="answer-list">
+            @foreach (var answer in Model.Answers)
+            {
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <label for="answer-@answer.Id">@answer.Text</label>
+
+                    <span class="answer-feedback" data-is-correct="@answer.IsCorrect" style="display:none;">
+                        @if (answer.IsCorrect)
+                        {
+                            <span class="badge badge-success">✔ Correct</span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-danger">❌ Incorrect</span>
+                        }
+                    </span>
+                </li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>No answers available.</p>
+    }
 </div>
+
+<button id="reveal-btn" class="btn btn-success" onclick="toggleAnswers()">Reveal Answers</button>
+
+<div class="mt-4">
+    <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary">Edit</a> |
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</div>
+
+@section Scripts {
+    <script>
+        function toggleAnswers() {
+            var feedbackElements = document.querySelectorAll('.answer-feedback');
+            feedbackElements.forEach(function(feedback) {
+                // Toggle visibility
+                if (feedback.style.display === 'none') {
+                    feedback.style.display = 'inline';
+                } else {
+                    feedback.style.display = 'none';
+                }
+            });
+
+            var button = document.getElementById('reveal-btn');
+            if (button.innerText === 'Reveal Answers') {
+                button.innerText = 'Hide Answers';
+            } else {
+                button.innerText = 'Reveal Answers';
+            }
+        }
+    </script>
+}

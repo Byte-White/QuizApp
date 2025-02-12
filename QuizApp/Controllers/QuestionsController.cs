@@ -36,6 +36,7 @@ namespace QuizApp.Controllers
 
             var question = await _context.Questions
                 .Include(q => q.Category)
+                .Include(q => q.Answers)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (question == null)
             {
