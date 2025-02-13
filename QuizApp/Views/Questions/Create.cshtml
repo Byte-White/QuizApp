@@ -36,12 +36,13 @@
 
             <h5>Answers</h5>
             <div id="answers-container">
-                <div class="answer-row form-group">
-                    <input type="text" name="Answers[0].Text" class="form-control" placeholder="Enter answer text..." />
-                    <label for="Answers_0__IsCorrect">Is Correct?</label>
-                    <input type="checkbox" name="Answers[0].IsCorrect" />
-                    <button type="button" class="btn btn-danger btn-remove-answer" style="margin-top: 5px;">Remove</button>
+                <div class="answer-row form-group d-flex align-items-center mb-2">
+                    <input type="text" name="Answers[0].Text" class="form-control me-2" placeholder="Enter answer text..." />
+                    <label for="Answers_0__IsCorrect" class="me-2">Correct?</label>
+                    <input type="checkbox" name="Answers[0].IsCorrect" class="form-check-input me-2" />
+                    <button type="button" class="btn btn-danger btn-remove-answer btn-sm">Remove</button>
                 </div>
+
             </div>
 
             <button type="button" class="btn btn-info" id="add-answer-btn">Add Answer</button>
@@ -66,11 +67,11 @@
             // Add new answer row
             $('#add-answer-btn').on('click', function () {
                 var answerRow = `
-                    <div class="answer-row form-group">
-                        <input type="text" name="Answers[${answerIndex}].Text" class="form-control" placeholder="Enter answer text..." />
-                        <label for="Answers_${answerIndex}__IsCorrect">Is Correct?</label>
-                        <input type="checkbox" name="Answers[${answerIndex}].IsCorrect" />
-                        <button type="button" class="btn btn-danger btn-remove-answer" style="margin-top: 5px;">Remove</button>
+                    <div class="answer-row form-group d-flex align-items-center mb-2">
+                        <input type="text" name="Answers[${answerIndex}].Text" class="form-control me-2" placeholder="Enter answer text..." />
+                        <label for="Answers_${answerIndex}__IsCorrect" class="me-2">Correct?</label>
+                        <input type="checkbox" name="Answers[${answerIndex}].IsCorrect" class="form-check-input me-2" />
+                        <button type="button" class="btn btn-danger btn-remove-answer btn-sm">Remove</button>
                     </div>
                 `;
                 $('#answers-container').append(answerRow);
