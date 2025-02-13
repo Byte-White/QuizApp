@@ -39,7 +39,7 @@
                 <div class="answer-row form-group d-flex align-items-center mb-2">
                     <input type="text" name="Answers[0].Text" class="form-control me-2" placeholder="Enter answer text..." />
                     <label for="Answers_0__IsCorrect" class="me-2">Correct?</label>
-                    <input type="checkbox" name="Answers[0].IsCorrect" class="form-check-input me-2" />
+                    <input type="checkbox" name="Answers[0].IsCorrect" class="form-check-input me-2" value="true"/>
                     <button type="button" class="btn btn-danger btn-remove-answer btn-sm">Remove</button>
                 </div>
 
@@ -70,7 +70,7 @@
                     <div class="answer-row form-group d-flex align-items-center mb-2">
                         <input type="text" name="Answers[${answerIndex}].Text" class="form-control me-2" placeholder="Enter answer text..." />
                         <label for="Answers_${answerIndex}__IsCorrect" class="me-2">Correct?</label>
-                        <input type="checkbox" name="Answers[${answerIndex}].IsCorrect" class="form-check-input me-2" />
+                        <input type="checkbox" name="Answers[${answerIndex}].IsCorrect" class="form-check-input me-2" value="true"/>
                         <button type="button" class="btn btn-danger btn-remove-answer btn-sm">Remove</button>
                     </div>
                 `;
