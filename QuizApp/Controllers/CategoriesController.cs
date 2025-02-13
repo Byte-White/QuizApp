@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +24,29 @@ namespace QuizApp.Controllers
         public async Task<IActionResult> Index()
         {
             return View(await _context.Categories.ToListAsync());
+        }
+
+        // GET: Categories/TableView
+        [Authorize]
+        public async Task<IActionResult> TableView()
+        {
+            return View(await _context.Categories.ToListAsync());
+        }
+
+        // GET: Categories/QuestionsByCategory/5
+        public async Task<IActionResult> QuestionsByCategory(int id)
+        {
+            var questions = await _context.Questions
+                                          .Where(q => q.CategoryId == id)
+                                          .Include(q => q.Category)
+                                          .ToListAsync();
+
+            if (questions == null)
+            {
+                return NotFound();
+            }
+
+            return RedirectToAction("Index", "Questions", new { categoryId = id }); 
         }
 
         // GET: Categories/Details/5

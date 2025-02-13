@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -20,10 +21,16 @@ namespace QuizApp.Controllers
         }
 
         // GET: Questions
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? categoryId)
         {
-            var applicationDbContext = _context.Questions.Include(q => q.Category);
-            return View(await applicationDbContext.ToListAsync());
+            IQueryable<Question> questions = _context.Questions.Include(q => q.Category);
+
+            if (categoryId.HasValue)
+            {
+                questions = questions.Where(q => q.CategoryId == categoryId.Value);
+            }
+
+            return View(await questions.ToListAsync());
         }
 
         // GET: Questions/Search
