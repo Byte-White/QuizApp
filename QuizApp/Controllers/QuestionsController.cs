@@ -82,7 +82,7 @@ namespace QuizApp.Controllers
         }
 
 
-        // GET: Questions/Edit/5
+        [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -90,50 +90,89 @@ namespace QuizApp.Controllers
                 return NotFound();
             }
 
-            var question = await _context.Questions.FindAsync(id);
+            var question = await _context.Questions
+                                          .Include(q => q.Category)
+                                          .Include(q => q.Answers)
+                                          .FirstOrDefaultAsync(m => m.Id == id);
+
             if (question == null)
             {
                 return NotFound();
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id", question.CategoryId);
+
+            // Populate categories in ViewBag for dropdown in the view
+            ViewBag.CategoryId = new SelectList(_context.Categories, "Id", "Name", question.CategoryId);
+
             return View(question);
         }
 
-        // POST: Questions/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Text,State,CategoryId")] Question question)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Text,State,CategoryId,Answers")] Question question)
         {
             if (id != question.Id)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            try
             {
-                try
+                var existingQuestion = await _context.Questions
+                    .Include(q => q.Answers)
+                    .FirstOrDefaultAsync(q => q.Id == id);
+
+                if (existingQuestion == null)
                 {
-                    _context.Update(question);
-                    await _context.SaveChangesAsync();
+                    return NotFound();
                 }
-                catch (DbUpdateConcurrencyException)
+
+                existingQuestion.Text = question.Text;
+                existingQuestion.State = question.State;
+                existingQuestion.CategoryId = question.CategoryId;
+
+                var answersToRemove = existingQuestion.Answers
+                    .Where(a => !question.Answers.Any(newA => newA.Id == a.Id))
+                    .ToList();
+
+                _context.Answers.RemoveRange(answersToRemove);
+
+                foreach (var answer in question.Answers)
                 {
-                    if (!QuestionExists(question.Id))
+                    if (answer.Id == 0) // New Answer
                     {
-                        return NotFound();
+                        answer.QuestionId = existingQuestion.Id;
+                        _context.Answers.Add(answer);
                     }
                     else
                     {
-                        throw;
+                        var existingAnswer = existingQuestion.Answers.FirstOrDefault(a => a.Id == answer.Id);
+                        if (existingAnswer != null)
+                        {
+                            existingAnswer.Text = answer.Text;
+                            existingAnswer.IsCorrect = answer.IsCorrect;
+                        }
                     }
                 }
-                return RedirectToAction(nameof(Index));
+
+                await _context.SaveChangesAsync();
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id", question.CategoryId);
-            return View(question);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!QuestionExists(question.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return RedirectToAction(nameof(Index));
         }
+
+
+
 
         // GET: Questions/Delete/5
         public async Task<IActionResult> Delete(int? id)

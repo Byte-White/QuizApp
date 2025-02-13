@@ -4,41 +4,101 @@
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
+<h1>Edit Question</h1>
 
 <h4>Question</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
+            <input type="hidden" id="deletedAnswers" name="DeletedAnswerIds" />
+
             <div class="form-group">
                 <label asp-for="Text" class="control-label"></label>
                 <input asp-for="Text" class="form-control" />
                 <span asp-validation-for="Text" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="State" class="control-label"></label>
-                <select asp-for="State" class="form-control"></select>
+                <select asp-for="State" class="form-control" asp-items="Html.GetEnumSelectList<QuestionState>()">
+                    <option value="">-- Select State --</option>
+                </select>
                 <span asp-validation-for="State" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="CategoryId" class="control-label"></label>
-                <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoryId"></select>
+                <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoryId">
+                    <option value="">-- Select Category --</option>
+                </select>
                 <span asp-validation-for="CategoryId" class="text-danger"></span>
             </div>
+
+            <h5>Answers</h5>
+            <div id="answers-container">
+                @for (var i = 0; i < Model.Answers.Count; i++)
+                {
+                    <div class="form-group answer-row">
+                        <input type="hidden" name="Answers[@i].Id" value="@Model.Answers[i].Id" />
+                        <input type="text" name="Answers[@i].Text" class="form-control" value="@Model.Answers[i].Text" placeholder="Enter answer text..." />
+                        <label>
+                            <input type="checkbox" name="Answers[@i].IsCorrect" value="true" @(Model.Answers[i].IsCorrect ? "checked" : "") />
+                            Is Correct?
+                        </label>
+                        <button type="button" class="btn btn-danger btn-remove-answer" data-id="@Model.Answers[i].Id" style="margin-top: 5px;">Remove</button>
+                    </div>
+                }
+            </div>
+
+            <button type="button" class="btn btn-info" id="add-answer-btn">Add Answer</button>
+
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        $(document).ready(function () {
+            var answerIndex = @Model.Answers.Count;
+            var deletedAnswers = [];
+
+            $('#add-answer-btn').on('click', function () {
+                var answerRow = `
+                    <div class="form-group answer-row">
+                        <input type="hidden" name="Answers[${answerIndex}].Id" value="0" />
+                        <input type="text" name="Answers[${answerIndex}].Text" class="form-control" placeholder="Enter answer text..." />
+                        <label>
+                            <input type="checkbox" name="Answers[${answerIndex}].IsCorrect" value="true" />
+                            Is Correct?
+                        </label>
+                        <button type="button" class="btn btn-danger btn-remove-answer" data-id="0" style="margin-top: 5px;">Remove</button>
+                    </div>
+                `;
+                $('#answers-container').append(answerRow);
+                answerIndex++;
+            });
+
+            $(document).on('click', '.btn-remove-answer', function () {
+                var answerId = $(this).data('id');
+
+                if (answerId !== 0) {
+                    deletedAnswers.push(answerId);
+                }
+
+                $('#deletedAnswers').val(deletedAnswers.join(','));
+                $(this).closest('.answer-row').remove();
+            });
+        });
+    </script>
 }
