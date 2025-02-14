@@ -58,7 +58,7 @@ using (var scope = app.Services.CreateScope())
 {
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
 
-    string email = "admin@admin.com";
+    string email = "admin@gmail.com";
     string password = "Password123@";
 
     if (await userManager.FindByEmailAsync(email) == null)
@@ -66,6 +66,7 @@ using (var scope = app.Services.CreateScope())
         var user = new IdentityUser();
         user.UserName = email;
         user.Email = email;
+        user.EmailConfirmed = true;
 
         await userManager.CreateAsync(user, password);
 

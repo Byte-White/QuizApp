@@ -14,7 +14,7 @@ namespace QuizApp.Controllers
     public class QuestionsController : Controller
     {
         private readonly ApplicationDbContext _context;
-
+        
         public QuestionsController(ApplicationDbContext context)
         {
             _context = context;
@@ -67,6 +67,7 @@ namespace QuizApp.Controllers
         }
 
         // GET: Questions/Create
+        [Authorize]
         public IActionResult Create()
         {
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");  // Show Category Name
@@ -74,6 +75,7 @@ namespace QuizApp.Controllers
         }
 
         // POST: Questions/Create
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Text,State,CategoryId,Answers")] Question question)
@@ -89,6 +91,7 @@ namespace QuizApp.Controllers
         }
 
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
@@ -113,6 +116,7 @@ namespace QuizApp.Controllers
             return View(question);
         }
 
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Text,State,CategoryId,Answers")] Question question)
@@ -182,6 +186,7 @@ namespace QuizApp.Controllers
 
 
         // GET: Questions/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -203,6 +208,7 @@ namespace QuizApp.Controllers
         // POST: Questions/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var question = await _context.Questions.FindAsync(id);

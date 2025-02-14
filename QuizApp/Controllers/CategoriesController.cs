@@ -27,7 +27,7 @@ namespace QuizApp.Controllers
         }
 
         // GET: Categories/TableView
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> TableView()
         {
             return View(await _context.Categories.ToListAsync());
